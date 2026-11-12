@@ -2,551 +2,412 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Attendance | Digital Attendance System</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Attendance | Digital Attendance System</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px;
+      background: #111c35;
+      color: white;
+      padding: 28px 18px;
+      flex-shrink: 0;
+    }
+    .brand { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .brand span { color: #5b9cff; }
+    .sidebar-sub { color: #9eabc4; font-size: 12px; margin-bottom: 35px; }
+    .nav-title {
+      color: #7f8da9;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      margin: 22px 12px 10px;
+    }
+    .nav-link {
+      display: block;
+      padding: 13px 14px;
+      color: #c8d2e5;
+      text-decoration: none;
+      border-radius: 10px;
+      margin-bottom: 5px;
+      font-size: 14px;
+      transition: .2s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: #263653;
+      color: white;
+    }
+    .nav-link.active { border-left: 3px solid #5b9cff; }
+    .logout {
+      width: 100%;
+      margin-top: 30px;
+      padding: 12px;
+      border: 1px solid #34425d;
+      background: transparent;
+      color: #dce5f5;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+    .main { flex: 1; padding: 32px; min-width: 0; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .subtitle { color: #718096; font-size: 14px; }
+    .admin-badge {
+      background: #e8f1ff;
+      color: #2463c5;
+      border-radius: 30px;
+      padding: 10px 15px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .panel {
+      background: white;
+      border: 1px solid #e6ebf2;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 18px rgba(20, 40, 80, .035);
+    }
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    h2 { font-size: 18px; margin: 0; }
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    label { font-size: 12px; font-weight: 700; color: #65728a; }
+    select, input {
+      min-width: 180px;
+      padding: 11px 12px;
+      border: 1px solid #dce3ed;
+      border-radius: 9px;
+      background: white;
+      font: inherit;
+      color: #172033;
+      outline: none;
+    }
+    select:focus, input:focus { border-color: #5794f5; }
+    .btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 17px;
+      font-weight: 700;
+      cursor: pointer;
+      font: inherit;
+    }
+    .btn-primary { background: #2869d7; color: white; }
+    .btn-light { background: #edf3fb; color: #315b98; }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .summary-card {
+      background: white;
+      border: 1px solid #e6ebf2;
+      border-radius: 15px;
+      padding: 22px;
+      box-shadow: 0 4px 18px rgba(20, 40, 80, .035);
+    }
+    .summary-label { color: #718096; font-size: 13px; margin-bottom: 10px; }
+    .summary-number { font-size: 30px; font-weight: 800; }
+    .summary-card.present .summary-number { color: #16834d; }
+    .summary-card.absent .summary-number { color: #c43b3b; }
+    .summary-card.total .summary-number { color: #2869d7; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
+    th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: #718096;
+      background: #f7f9fc;
+      padding: 14px 12px;
+    }
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #edf1f6;
+      font-size: 13px;
+    }
+    tbody tr:hover { background: #fafcff; }
+    .status {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .status-present { background: #e3f8ed; color: #16834d; }
+    .status-absent { background: #ffe8e8; color: #c43b3b; }
+    .status-incomplete { background: #fff3d9; color: #a46b00; }
+    .message {
+      display: none;
+      padding: 12px 15px;
+      margin-bottom: 18px;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+    .message.error { display: block; background: #fff0f0; color: #b42323; }
+    .empty { padding: 35px; text-align: center; color: #8793a7; }
+    .note { font-size: 12px; color: #8190a5; }
+    @media (max-width: 850px) {
+      .sidebar { width: 210px; }
+      .main { padding: 22px; }
+    }
+    @media (max-width: 650px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .main { padding: 16px; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .filters { width: 100%; }
+      .field, select, input { width: 100%; }
+    }
+  </style>
 </head>
-<body class="dashboard-page">
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">DIGITAL <span>ATTENDANCE</span></div>
+      <div class="sidebar-sub">Track. Manage. Monitor.</div>
 
-    <div class="dashboard-layout">
+      <div class="nav-title">MAIN MENU</div>
+      <a class="nav-link" href="dashboard.html">▦ Dashboard</a>
+      <a class="nav-link" href="employee.html">♙ Employees</a>
+      <a class="nav-link" href="attendance.html">◷ Attendance Record</a>
+      <a class="nav-link active" href="monthly.html">▤ Monthly Attendance</a>
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-icon">DA</div>
-                <div>
-                    <h2>Digital Attendance</h2>
-                    <span>Track. Manage. Monitor.</span>
-                </div>
-            </div>
+      <button class="logout" id="logoutButton">↪ Log Out</button>
+    </aside>
 
-            <nav class="sidebar-nav">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="employee.html">Employees</a>
-                <a href="attendance.html">Attendance Record</a>
-                <a href="monthly.html" class="active">Monthly Attendance</a>
-            </nav>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Monthly Attendance</h1>
+          <div class="subtitle">Review monthly attendance records by department.</div>
+        </div>
+        <div class="admin-badge">● Administrator</div>
+      </div>
 
-            <button class="logout-btn" onclick="logoutAdmin()">Log Out</button>
-        </aside>
+      <div id="pageMessage" class="message"></div>
 
-        <!-- MAIN CONTENT -->
-        <main class="dashboard-main">
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Monthly Report Filters</h2>
+          <span class="note">Choose department and month.</span>
+        </div>
 
-            <header class="dashboard-header">
-                <div>
-                    <h1>Monthly Attendance</h1>
-                    <p>View and monitor employee attendance for each month.</p>
-                </div>
+        <div class="filters">
+          <div class="field">
+            <label for="departmentFilter">DEPARTMENT</label>
+            <select id="departmentFilter">
+              <option value="">All Departments</option>
+              <option value="BSCRIM">BSCRIM</option>
+              <option value="BSIT">BSIT</option>
+              <option value="BSHM">BSHM</option>
+              <option value="BSED">BSED</option>
+              <option value="BSBA">BSBA</option>
+              <option value="BEED">BEED</option>
+            </select>
+          </div>
 
-                <div class="header-date" id="currentDate"></div>
-            </header>
+          <div class="field">
+            <label for="monthFilter">MONTH</label>
+            <input type="month" id="monthFilter">
+          </div>
 
-            <!-- MONTH SELECTOR -->
-            <section class="content-card">
-                <div class="section-heading">
-                    <div>
-                        <h2>Attendance Overview</h2>
-                        <p>Select a month to view attendance records.</p>
-                    </div>
+          <button class="btn btn-primary" id="searchButton">Generate Report</button>
+          <button class="btn btn-light" id="resetButton">Reset</button>
+        </div>
+      </section>
 
-                    <input type="month" id="monthSelector">
-                </div>
+      <section class="summary-grid">
+        <div class="summary-card total">
+          <div class="summary-label">Total Attendance Records</div>
+          <div class="summary-number" id="totalCount">0</div>
+        </div>
+        <div class="summary-card present">
+          <div class="summary-label">Present Records</div>
+          <div class="summary-number" id="presentCount">0</div>
+        </div>
+        <div class="summary-card absent">
+          <div class="summary-label">Absent Records</div>
+          <div class="summary-number" id="absentCount">0</div>
+        </div>
+      </section>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span>Total Employees</span>
-                        <h2 id="totalEmployees">0</h2>
-                    </div>
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Monthly Attendance Details</h2>
+          <span class="note" id="reportLabel">No report generated</span>
+        </div>
 
-                    <div class="stat-card">
-                        <span>Employees with Attendance</span>
-                        <h2 id="employeesWithAttendance">0</h2>
-                    </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Position</th>
+                <th>Department</th>
+                <th>Date</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyTableBody">
+              <tr><td colspan="8" class="empty">Select a month to generate the report.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
 
-                    <div class="stat-card">
-                        <span>Total Present Days</span>
-                        <h2 id="totalPresentDays">0</h2>
-                    </div>
+  <script src="database.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const departmentFilter = document.getElementById("departmentFilter");
+    const monthFilter = document.getElementById("monthFilter");
+    const tableBody = document.getElementById("monthlyTableBody");
+    const pageMessage = document.getElementById("pageMessage");
 
-                    <div class="stat-card">
-                        <span>Completed Time Out</span>
-                        <h2 id="completedTimeOut">0</h2>
-                    </div>
-                </div>
-            </section>
+    function currentMonth() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    }
 
-            <!-- DEPARTMENT FOLDERS -->
-            <section class="content-card">
-                <div class="section-heading">
-                    <div>
-                        <h2>Department Folders</h2>
-                        <p>Select a department to filter its monthly records.</p>
-                    </div>
-                </div>
+    monthFilter.value = currentMonth();
 
-                <div class="department-grid" id="departmentFolders">
-                    <!-- Department folders generated by JavaScript -->
-                </div>
-            </section>
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[character]));
+    }
 
-            <!-- CALENDAR -->
-            <section class="content-card">
-                <div class="section-heading">
-                    <div>
-                        <h2 id="calendarTitle">Attendance Calendar</h2>
-                        <p>Click a date to view attendance records for that day.</p>
-                    </div>
+    function safeText(value) {
+      return value === null || value === undefined || value === ""
+        ? "—"
+        : String(value);
+    }
 
-                    <button class="secondary-btn" id="clearDateFilter">
-                        Clear Date Filter
-                    </button>
-                </div>
+    function statusBadge(record) {
+      const status = String(record.status || "").toLowerCase();
 
-                <div class="calendar-grid" id="monthlyCalendar">
-                    <!-- Calendar generated by JavaScript -->
-                </div>
+      if (status.includes("absent")) {
+        return '<span class="status status-absent">Absent</span>';
+      }
+      if (status.includes("incomplete")) {
+        return '<span class="status status-incomplete">Incomplete</span>';
+      }
+      if (record.timeIn && record.timeOut) {
+        return '<span class="status status-present">Present</span>';
+      }
+      if (record.timeIn) {
+        return '<span class="status status-incomplete">In Progress</span>';
+      }
+      return '<span class="status status-absent">Absent</span>';
+    }
 
-                <div class="calendar-legend">
-                    <span><i class="legend-present"></i> Has Attendance</span>
-                    <span><i class="legend-empty"></i> No Attendance</span>
-                    <span><i class="legend-selected"></i> Selected Date</span>
-                </div>
-            </section>
+    async function generateReport() {
+      pageMessage.textContent = "";
+      pageMessage.className = "message";
+      tableBody.innerHTML =
+        '<tr><td colspan="8" class="empty">Generating report...</td></tr>';
 
-            <!-- MONTHLY TABLE -->
-            <section class="content-card">
-                <div class="section-heading">
-                    <div>
-                        <h2 id="recordsTitle">Monthly Employee Summary</h2>
-                        <p id="recordsDescription">
-                            Attendance totals for the selected month.
-                        </p>
-                    </div>
+      try {
+        const filters = {};
+        if (departmentFilter.value) filters.department = departmentFilter.value;
+        if (monthFilter.value) filters.month = monthFilter.value;
 
-                    <input
-                        type="search"
-                        id="monthlySearch"
-                        placeholder="Search employee..."
-                    >
-                </div>
+        const records = await window.DASDatabase.getAttendance(filters);
 
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Employee ID</th>
-                                <th>Employee Name</th>
-                                <th>Position</th>
-                                <th>Department</th>
-                                <th>Present Days</th>
-                                <th>Time In</th>
-                                <th>Time Out</th>
-                                <th>Last Attendance</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="monthlyTableBody">
-                            <tr>
-                                <td colspan="8">No monthly records found.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <div id="messageBox" class="message-box"></div>
-
-    <script src="database.js"></script>
-    <script src="app.js"></script>
-
-    <script>
-        requireAdmin();
-
-        const departments = [
-            "BSCRIM",
-            "BSIT",
-            "BSHM",
-            "BSED",
-            "BSBA",
-            "BEED"
-        ];
-
-        let selectedDepartment = "ALL";
-        let selectedDate = "";
-        let currentMonth = "";
-
-        const monthSelector = document.getElementById("monthSelector");
-        const monthlySearch = document.getElementById("monthlySearch");
-
-        function getLocalDateString(date = new Date()) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-
-            return `${year}-${month}-${day}`;
+        if (!Array.isArray(records) || records.length === 0) {
+          tableBody.innerHTML =
+            '<tr><td colspan="8" class="empty">No attendance records found for this selection.</td></tr>';
+          document.getElementById("totalCount").textContent = "0";
+          document.getElementById("presentCount").textContent = "0";
+          document.getElementById("absentCount").textContent = "0";
+          document.getElementById("reportLabel").textContent =
+            `${departmentFilter.value || "All Departments"} • ${monthFilter.value || "All Months"}`;
+          return;
         }
 
-        function getSelectedYearMonth() {
-            const value = monthSelector.value;
-
-            if (!value) {
-                return {
-                    year: new Date().getFullYear(),
-                    month: new Date().getMonth() + 1
-                };
-            }
-
-            const parts = value.split("-");
-
-            return {
-                year: Number(parts[0]),
-                month: Number(parts[1])
-            };
-        }
-
-        function getMonthRecords() {
-            const { year, month } = getSelectedYearMonth();
-
-            return DB.getMonthlyAttendance(year, month) || [];
-        }
-
-        function getFilteredRecords() {
-            let records = getMonthRecords();
-
-            if (selectedDepartment !== "ALL") {
-                records = records.filter(record => {
-                    const employee = DB.getEmployee(record.employeeId);
-
-                    return employee &&
-                        employee.department === selectedDepartment;
-                });
-            }
-
-            if (selectedDate) {
-                records = records.filter(record =>
-                    record.date === selectedDate
-                );
-            }
-
-            return records;
-        }
-
-        function renderDepartmentFolders() {
-            const employees = DB.getEmployees() || [];
-            const records = getMonthRecords();
-
-            const container = document.getElementById("departmentFolders");
-
-            let html = `
-                <button class="department-folder ${
-                    selectedDepartment === "ALL" ? "selected" : ""
-                }" data-department="ALL">
-                    <div class="folder-icon">📁</div>
-                    <h3>All Departments</h3>
-                    <p>${employees.length} Employees</p>
-                </button>
-            `;
-
-            departments.forEach(department => {
-                const departmentEmployees = employees.filter(employee =>
-                    employee.department === department
-                );
-
-                const departmentRecords = records.filter(record => {
-                    const employee = DB.getEmployee(record.employeeId);
-
-                    return employee &&
-                        employee.department === department;
-                });
-
-                html += `
-                    <button class="department-folder ${
-                        selectedDepartment === department ? "selected" : ""
-                    }" data-department="${department}">
-                        <div class="folder-icon">📁</div>
-                        <h3>${department}</h3>
-                        <p>${departmentEmployees.length} Employees</p>
-                        <small>${departmentRecords.length} Attendance Records</small>
-                    </button>
-                `;
-            });
-
-            container.innerHTML = html;
-
-            container.querySelectorAll("[data-department]").forEach(button => {
-                button.addEventListener("click", () => {
-                    selectedDepartment = button.dataset.department;
-
-                    renderDepartmentFolders();
-                    renderMonthlySummary();
-                    renderCalendar();
-                });
-            });
-        }
-
-        function renderStats() {
-            const employees = DB.getEmployees() || [];
-            const records = getFilteredRecords();
-
-            const employeesWithAttendance = new Set(
-                records.map(record => record.employeeId)
-            );
-
-            const presentDays = new Set(
-                records
-                    .filter(record => record.timeIn)
-                    .map(record => `${record.employeeId}-${record.date}`)
-            );
-
-            const completedTimeOut = records.filter(record =>
-                record.timeIn && record.timeOut
-            ).length;
-
-            document.getElementById("totalEmployees").textContent =
-                selectedDepartment === "ALL"
-                    ? employees.length
-                    : employees.filter(employee =>
-                        employee.department === selectedDepartment
-                    ).length;
-
-            document.getElementById("employeesWithAttendance").textContent =
-                employeesWithAttendance.size;
-
-            document.getElementById("totalPresentDays").textContent =
-                presentDays.size;
-
-            document.getElementById("completedTimeOut").textContent =
-                completedTimeOut;
-        }
-
-        function renderMonthlySummary() {
-            const employees = DB.getEmployees() || [];
-            const records = getFilteredRecords();
-
-            const searchValue = monthlySearch.value
-                .trim()
-                .toLowerCase();
-
-            let filteredEmployees = employees;
-
-            if (selectedDepartment !== "ALL") {
-                filteredEmployees = filteredEmployees.filter(employee =>
-                    employee.department === selectedDepartment
-                );
-            }
-
-            filteredEmployees = filteredEmployees.filter(employee => {
-                const text = [
-                    employee.employeeId,
-                    employee.name,
-                    employee.position,
-                    employee.department
-                ].join(" ").toLowerCase();
-
-                return text.includes(searchValue);
-            });
-
-            const tbody = document.getElementById("monthlyTableBody");
-
-            if (filteredEmployees.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8">No employees found.</td>
-                    </tr>
-                `;
-
-                renderStats();
-                return;
-            }
-
-            tbody.innerHTML = filteredEmployees.map(employee => {
-                const employeeRecords = records.filter(record =>
-                    record.employeeId === employee.employeeId
-                );
-
-                const presentDates = new Set(
-                    employeeRecords
-                        .filter(record => record.timeIn)
-                        .map(record => record.date)
-                );
-
-                const totalTimeIn = employeeRecords.filter(record =>
-                    record.timeIn
-                ).length;
-
-                const totalTimeOut = employeeRecords.filter(record =>
-                    record.timeOut
-                ).length;
-
-                const lastAttendance = employeeRecords
-                    .map(record => record.date)
-                    .sort()
-                    .reverse()[0] || "—";
-
-                return `
-                    <tr>
-                        <td>${employee.employeeId}</td>
-                        <td>${employee.name}</td>
-                        <td>${employee.position}</td>
-                        <td>${employee.department}</td>
-                        <td><strong>${presentDates.size}</strong></td>
-                        <td>${totalTimeIn}</td>
-                        <td>${totalTimeOut}</td>
-                        <td>${lastAttendance}</td>
-                    </tr>
-                `;
-            }).join("");
-
-            renderStats();
-        }
-
-        function renderCalendar() {
-            const { year, month } = getSelectedYearMonth();
-
-            const firstDay = new Date(year, month - 1, 1).getDay();
-            const daysInMonth = new Date(year, month, 0).getDate();
-
-            const records = getMonthRecords();
-
-            const attendanceDates = new Set();
-
-            records.forEach(record => {
-                if (!record.timeIn) return;
-
-                if (selectedDepartment !== "ALL") {
-                    const employee = DB.getEmployee(record.employeeId);
-
-                    if (!employee ||
-                        employee.department !== selectedDepartment) {
-                        return;
-                    }
-                }
-
-                attendanceDates.add(record.date);
-            });
-
-            const monthName = new Date(year, month - 1)
-                .toLocaleString("en-US", { month: "long" });
-
-            document.getElementById("calendarTitle").textContent =
-                `${monthName} ${year} Attendance Calendar`;
-
-            let html = `
-                <div class="calendar-day-label">Sun</div>
-                <div class="calendar-day-label">Mon</div>
-                <div class="calendar-day-label">Tue</div>
-                <div class="calendar-day-label">Wed</div>
-                <div class="calendar-day-label">Thu</div>
-                <div class="calendar-day-label">Fri</div>
-                <div class="calendar-day-label">Sat</div>
-            `;
-
-            for (let i = 0; i < firstDay; i++) {
-                html += `<div class="calendar-empty"></div>`;
-            }
-
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateString =
-                    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-                const hasAttendance = attendanceDates.has(dateString);
-                const isSelected = selectedDate === dateString;
-
-                html += `
-                    <button
-                        class="calendar-date ${
-                            hasAttendance ? "has-attendance" : ""
-                        } ${
-                            isSelected ? "selected-date" : ""
-                        }"
-                        data-date="${dateString}"
-                    >
-                        <span>${day}</span>
-                        ${
-                            hasAttendance
-                                ? '<small>Present</small>'
-                                : '<small>—</small>'
-                        }
-                    </button>
-                `;
-            }
-
-            document.getElementById("monthlyCalendar").innerHTML = html;
-
-            document.querySelectorAll("[data-date]").forEach(button => {
-                button.addEventListener("click", () => {
-                    selectedDate = button.dataset.date;
-
-                    document.getElementById("recordsTitle").textContent =
-                        `Attendance on ${selectedDate}`;
-
-                    document.getElementById("recordsDescription").textContent =
-                        "Employee attendance records for the selected date.";
-
-                    renderCalendar();
-                    renderMonthlySummary();
-                });
-            });
-        }
-
-        function refreshMonthlyPage() {
-            if (!monthSelector.value) {
-                monthSelector.value = getLocalDateString().slice(0, 7);
-            }
-
-            currentMonth = monthSelector.value;
-
-            if (selectedDate && !selectedDate.startsWith(currentMonth)) {
-                selectedDate = "";
-            }
-
-            document.getElementById("currentDate").textContent =
-                new Date().toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                });
-
-            renderDepartmentFolders();
-            renderCalendar();
-            renderMonthlySummary();
-        }
-
-        monthSelector.addEventListener("change", () => {
-            selectedDate = "";
-
-            document.getElementById("recordsTitle").textContent =
-                "Monthly Employee Summary";
-
-            document.getElementById("recordsDescription").textContent =
-                "Attendance totals for the selected month.";
-
-            refreshMonthlyPage();
-        });
-
-        monthlySearch.addEventListener("input", renderMonthlySummary);
-
-        document.getElementById("clearDateFilter").addEventListener("click", () => {
-            selectedDate = "";
-
-            document.getElementById("recordsTitle").textContent =
-                "Monthly Employee Summary";
-
-            document.getElementById("recordsDescription").textContent =
-                "Attendance totals for the selected month.";
-
-            renderCalendar();
-            renderMonthlySummary();
-        });
-
-        refreshMonthlyPage();
-    </script>
-
+        const present = records.filter(record =>
+          record.timeIn && record.timeOut &&
+          !String(record.status || "").toLowerCase().includes("absent")
+        ).length;
+
+        const absent = records.filter(record =>
+          String(record.status || "").toLowerCase().includes("absent")
+        ).length;
+
+        document.getElementById("totalCount").textContent = records.length;
+        document.getElementById("presentCount").textContent = present;
+        document.getElementById("absentCount").textContent = absent;
+
+        document.getElementById("reportLabel").textContent =
+          `${departmentFilter.value || "All Departments"} • ${monthFilter.value || "All Months"}`;
+
+        tableBody.innerHTML = records.map(record => `
+          <tr>
+            <td><strong>${escapeHtml(safeText(record.employeeId))}</strong></td>
+            <td>${escapeHtml(safeText(record.employeeName))}</td>
+            <td>${escapeHtml(safeText(record.position))}</td>
+            <td>${escapeHtml(safeText(record.department))}</td>
+            <td>${escapeHtml(safeText(record.attendanceDate))}</td>
+            <td>${escapeHtml(safeText(record.timeIn))}</td>
+            <td>${escapeHtml(safeText(record.timeOut))}</td>
+            <td>${statusBadge(record)}</td>
+          </tr>
+        `).join("");
+      } catch (error) {
+        tableBody.innerHTML =
+          '<tr><td colspan="8" class="empty">Unable to generate the report.</td></tr>';
+        pageMessage.textContent = error.message || "Unable to load monthly attendance.";
+        pageMessage.className = "message error";
+      }
+    }
+
+    document.getElementById("searchButton").addEventListener("click", generateReport);
+
+    document.getElementById("resetButton").addEventListener("click", () => {
+      departmentFilter.value = "";
+      monthFilter.value = currentMonth();
+      generateReport();
+    });
+
+    generateReport();
+  </script>
 </body>
 </html>
