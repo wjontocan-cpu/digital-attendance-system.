@@ -1,153 +1,292 @@
 
-/* =========================================
-   DIGITAL ATTENDANCE SYSTEM
-   APP.JS
-========================================= */
+"use strict";
 
-// AUTHENTICATION BACKEND
-// We will connect this to the secure backend later.
-const AUTH_API = "/api/auth";
+/*
+ * Digital Attendance System
+ * app.js
+ *
+ * Handles administrator login, logout, session validation,
+ * and shared frontend notifications.
+ */
 
-// MESSAGE DISPLAY
-function showMessage(message, type = "success") {
-    const messageBox = document.getElementById("loginMessage");
+(function () {
+    const DB = window.DASDatabase;
 
-    if (!messageBox) return;
+    function showMessage(message, type = "error") {
+        let notification = document.getElementById("dasNotification");
 
-    messageBox.textContent = message;
-    messageBox.className = `message ${type}`;
+        if (!notification) {
+            notification = document.createElement("div");
+            notification.id = "dasNotification";
+            notification.setAttribute("role", "status");
+            notification.setAttribute("aria-live", "polite");
 
-    // Automatically hide after 3 seconds
-    setTimeout(() => {
-        messageBox.textContent = "";
-        messageBox.className = "message";
-    }, 3000);
-}
+            Object.assign(notification.style, {
+                position: "fixed",
+                top: "20px",
+                right: "20px",
+                zIndex: "99999",
+                maxWidth: "360px",
+                padding: "14px 20px",
+                borderRadius: "10px",
+                color: "#ffffff",
+                fontSize: "14px",
+                fontWeight: "600",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.15)"
+            });
 
-// PASSWORD EYE TOGGLE
-const togglePassword = document.getElementById("togglePassword");
-const adminPassword = document.getElementById("adminPassword");
+            document.body.appendChild(notification);
+        }
 
-if (togglePassword && adminPassword) {
+        notification.textContent = message;
+        notification.style.background =
+            type === "success" ? "#15803d" : "#b91c1c";
 
-    togglePassword.addEventListener("click", function () {
+        notification.style.display = "block";
 
-        const isPassword =
-            adminPassword.type === "password";
+        window.clearTimeout(notification.hideTimer);
 
-        adminPassword.type =
-            isPassword ? "text" : "password";
+        notification.hideTimer = window.setTimeout(() => {
+            notification.style.display = "none";
+        }, 3500);
+    }
 
-        togglePassword.textContent =
-            isPassword ? "🙈" : "👁";
-
-        togglePassword.setAttribute(
-            "aria-label",
-            isPassword ? "Hide password" : "Show password"
+    function getInput(form, name) {
+        return form.querySelector(
+            `[name="${name}"], #${name}`
         );
-    });
-}
+    }
 
-// ADMIN LOGIN
-const adminLoginForm =
-    document.getElementById("adminLoginForm");
+    function setLoading(form, loading) {
+        const submitButton = form.querySelector(
+            'button[type="submit"], input[type="submit"]'
+        );
 
-if (adminLoginForm) {
+        if (!submitButton) return;
 
-    adminLoginForm.addEventListener("submit", async function (event) {
+        if (loading) {
+            submitButton.dataset.originalText =
+                submitButton.textContent || submitButton.value || "";
 
-        event.preventDefault();
+            submitButton.disabled = true;
 
-        const username =
-            document.getElementById("adminUsername").value.trim();
+            if (submitButton.tagName === "BUTTON") {
+                submitButton.textContent = "Please wait...";
+            } else {
+                submitButton.value = "Please wait...";
+            }
+        } else {
+            submitButton.disabled = false;
 
-        const password =
-            document.getElementById("adminPassword").value;
+            if (submitButton.tagName === "BUTTON") {
+                submitButton.textContent =
+                    submitButton.dataset.originalText || "Submit";
+            } else {
+                submitButton.value =
+                    submitButton.dataset.originalText || "Submit";
+            }
+        }
+    }
 
-        const loginButton =
-            adminLoginForm.querySelector(".login-button");
-
-        if (!username || !password) {
-            showMessage(
-                "Please enter your username and password.",
-                "error"
-            );
+    async function handleLogin(form) {
+        if (!DB) {
+            showMessage("Database connection is unavailable.");
             return;
         }
 
-        loginButton.disabled = true;
-        loginButton.textContent = "PLEASE WAIT...";
+        const usernameInput = getInput(form, "username");
+        const passwordInput = getInput(form, "password");
+
+        if (!usernameInput || !passwordInput) {
+            showMessage("Login form fields are missing.");
+            return;
+        }
+
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!username || !password) {
+            showMessage("Please enter your username and password.");
+            return;
+        }
+
+        setLoading(form, true);
 
         try {
+            const result = await DB.login(username, password);
 
-            const response = await fetch(
-                `${AUTH_API}/admin-login`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password
-                    }),
-                    credentials: "include"
-                }
-            );
+            if (result.success) {
+                showMessage("Login successful.", "success");
 
-            const result = await response.json();
-
-            if (!response.ok || !result.success) {
-                showMessage(
-                    result.message || "Invalid username or password.",
-                    "error"
-                );
-                return;
+                window.location.replace("dashboard.html");
             }
-
-            // Store only the authenticated session information.
-            sessionStorage.setItem(
-                "adminAuthenticated",
-                "true"
-            );
-
-            showMessage("Login Successful!", "success");
-
-            setTimeout(() => {
-                window.location.href = "dashboard.html";
-            }, 1000);
-
         } catch (error) {
+            showMessage(error.message || "Login failed.");
+        } finally {
+            setLoading(form, false);
+        }
+    }
+
+    async function handleSetup(form) {
+        if (!DB) {
+            showMessage("Database connection is unavailable.");
+            return;
+        }
+
+        const usernameInput = getInput(form, "username");
+        const passwordInput = getInput(form, "password");
+        const confirmInput =
+            getInput(form, "confirmPassword") ||
+            getInput(form, "confirm-password");
+
+        if (!usernameInput || !passwordInput) {
+            showMessage("Setup form fields are missing.");
+            return;
+        }
+
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+
+        if (confirmInput && password !== confirmInput.value) {
+            showMessage("Passwords do not match.");
+            return;
+        }
+
+        if (password.length < 12) {
+            showMessage("Admin password must be at least 12 characters.");
+            return;
+        }
+
+        setLoading(form, true);
+
+        try {
+            const result = await DB.setupAdmin(username, password);
 
             showMessage(
-                "Unable to connect to the authentication server.",
-                "error"
+                result.message || "Administrator account created.",
+                "success"
             );
 
+            window.setTimeout(() => {
+                window.location.replace("login.html");
+            }, 1200);
+        } catch (error) {
+            showMessage(error.message || "Setup failed.");
         } finally {
-
-            loginButton.disabled = false;
-            loginButton.innerHTML = "<span>⇥</span> LOG IN";
-
+            setLoading(form, false);
         }
-    });
-}
-
-// ADMIN SESSION CHECK
-function requireAdmin() {
-
-    const authenticated =
-        sessionStorage.getItem("adminAuthenticated");
-
-    if (authenticated !== "true") {
-        window.location.href = "index.html";
     }
-}
 
-// ADMIN LOGOUT
-function logoutAdmin() {
+    async function handleLogout() {
+        if (!DB) {
+            window.location.replace("login.html");
+            return;
+        }
 
-    sessionStorage.removeItem("adminAuthenticated");
+        try {
+            await DB.logout();
+        } catch (error) {
+            // Redirect to login even if the session has expired.
+        }
 
-    window.location.href = "index.html";
-}
+        window.location.replace("login.html");
+    }
+
+    async function checkAdminSession() {
+        const protectedPage = [
+            "dashboard.html",
+            "employee.html",
+            "attendance.html",
+            "monthly.html"
+        ];
+
+        const currentPage = window.location.pathname
+            .split("/")
+            .pop()
+            .toLowerCase();
+
+        if (!protectedPage.includes(currentPage)) {
+            return;
+        }
+
+        if (!DB) {
+            window.location.replace("login.html");
+            return;
+        }
+
+        try {
+            await DB.getCurrentAdmin();
+        } catch (error) {
+            window.location.replace("login.html");
+        }
+    }
+
+    function setupPasswordToggles() {
+        document.querySelectorAll("[data-toggle-password]").forEach(
+            (button) => {
+                button.addEventListener("click", () => {
+                    const targetId =
+                        button.getAttribute("data-toggle-password");
+
+                    const input = document.getElementById(targetId);
+
+                    if (!input) return;
+
+                    const isPassword = input.type === "password";
+
+                    input.type = isPassword ? "text" : "password";
+
+                    button.setAttribute(
+                        "aria-label",
+                        isPassword ? "Hide password" : "Show password"
+                    );
+                });
+            }
+        );
+    }
+
+    function initialize() {
+        const loginForms = document.querySelectorAll(
+            "#loginForm, #adminLoginForm, [data-admin-login]"
+        );
+
+        loginForms.forEach((form) => {
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                handleLogin(form);
+            });
+        });
+
+        const setupForms = document.querySelectorAll(
+            "#setupForm, [data-admin-setup]"
+        );
+
+        setupForms.forEach((form) => {
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                handleSetup(form);
+            });
+        });
+
+        document.querySelectorAll(
+            "#logoutButton, #logoutBtn, [data-logout]"
+        ).forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                handleLogout();
+            });
+        });
+
+        setupPasswordToggles();
+        checkAdminSession();
+    }
+
+    document.addEventListener("DOMContentLoaded", initialize);
+
+    // Shared functions available to other frontend scripts.
+    window.DASApp = {
+        showMessage,
+        handleLogout,
+        checkAdminSession
+    };
+})();
