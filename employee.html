@@ -6,151 +6,539 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employees | Digital Attendance System</title>
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        :root {
+            --navy: #172554;
+            --blue: #2563eb;
+            --background: #f4f7fb;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --green: #15803d;
+            --red: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .dashboard-layout {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            flex-shrink: 0;
+            background: var(--navy);
+            color: white;
+            padding: 25px 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px 30px;
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 12px;
+            background: white;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .sidebar-brand p {
+            color: #bfdbfe;
+            font-size: 11px;
+            margin: 5px 0 0;
+        }
+
+        .nav-label {
+            color: #93a4c8;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            padding: 12px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .sidebar-nav a {
+            color: #dbeafe;
+            text-decoration: none;
+            padding: 13px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: #2f4380;
+            color: white;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 25px;
+        }
+
+        .sidebar-bottom button {
+            width: 100%;
+            padding: 13px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            gap: 15px;
+        }
+
+        .topbar h1 {
+            font-size: 27px;
+            margin: 0;
+        }
+
+        .topbar p {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 7px 0 0;
+        }
+
+        .date-display {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .content-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(15,23,42,0.03);
+        }
+
+        .card-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .card-heading h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .card-heading p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 650;
+            color: #334155;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            min-height: 44px;
+            padding: 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: white;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+        }
+
+        .password-wrapper input {
+            padding-right: 65px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .primary-button,
+        .secondary-button {
+            padding: 12px 20px;
+            border-radius: 9px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .primary-button {
+            background: var(--blue);
+            color: white;
+        }
+
+        .primary-button:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-button {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .primary-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .list-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-select {
+            min-width: 190px;
+            padding: 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: white;
+            font-size: 13px;
+        }
+
+        .employee-count {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .department-badge {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 7px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .position-badge {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 7px;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 7px;
+        }
+
+        .edit-button,
+        .delete-button {
+            padding: 7px 10px;
+            border-radius: 7px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .edit-button {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .delete-button {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: var(--muted);
+            padding: 35px 15px;
+        }
+
+        @media(max-width: 950px) {
+            .sidebar {
+                width: 210px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 700px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .sidebar-brand {
+                padding-bottom: 15px;
+            }
+
+            .sidebar-nav {
+                display: grid;
+                grid-template-columns: repeat(2,minmax(0,1fr));
+            }
+
+            .sidebar-bottom {
+                margin-top: 15px;
+                padding-top: 0;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-<body class="dashboard-body">
+
+<body>
 
 <div class="dashboard-layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
 
         <div class="sidebar-brand">
-            <div class="sidebar-logo">DA</div>
+            <div class="brand-icon">DA</div>
+
             <div>
                 <h2>Digital Attendance</h2>
-                <p>Management System</p>
+                <p>Track. Manage. Monitor.</p>
             </div>
         </div>
 
-        <div class="sidebar-menu">
+        <div class="nav-label">MAIN MENU</div>
 
-            <p class="menu-label">MAIN MENU</p>
-
-            <a href="dashboard.html" class="sidebar-link">
+        <nav class="sidebar-nav">
+            <a href="dashboard.html">
                 <span>▦</span> Dashboard
             </a>
 
-            <a href="employee.html" class="sidebar-link active">
+            <a href="employee.html" class="active">
                 <span>♙</span> Employees
             </a>
 
-            <a href="attendance.html" class="sidebar-link">
-                <span>▤</span> Attendance Record
+            <a href="attendance.html">
+                <span>◷</span> Attendance Record
             </a>
 
-            <a href="monthly.html" class="sidebar-link">
-                <span>▦</span> Monthly Attendance
+            <a href="monthly.html">
+                <span>▣</span> Monthly Attendance
             </a>
+        </nav>
 
-            <p class="menu-label">ACCOUNT</p>
-
-            <button class="sidebar-link logout-link"
-                    onclick="logoutAdmin()">
-                <span>⇥</span> Logout
+        <div class="sidebar-bottom">
+            <button type="button" id="logoutButton">
+                ↪ &nbsp; Log Out
             </button>
-
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="admin-avatar">A</div>
-            <div>
-                <strong>Administrator</strong>
-                <p>System Admin</p>
-            </div>
         </div>
 
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="dashboard-main">
+    <main class="main-content">
 
-        <header class="dashboard-header">
-
+        <header class="topbar">
             <div>
                 <h1>Employee Management</h1>
-                <p>Register and manage faculty and staff.</p>
+                <p>Register and manage faculty and staff information.</p>
             </div>
 
+            <div class="date-display" id="currentDate">
+                Loading date...
+            </div>
         </header>
 
-        <!-- SUCCESS / ERROR MESSAGE -->
-        <div id="employeeMessage"
-             class="message"
-             role="status"
-             aria-live="polite">
-        </div>
+        <!-- EMPLOYEE REGISTRATION -->
+        <section class="content-card">
 
-        <!-- STATISTICS -->
-        <section class="stats-grid">
-
-            <div class="stat-card">
-                <div class="stat-icon blue">♙</div>
-                <div>
-                    <p>Total Employees</p>
-                    <h2 id="employeeTotal">0</h2>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon green">✓</div>
-                <div>
-                    <p>Faculty</p>
-                    <h2 id="facultyTotal">0</h2>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon orange">♧</div>
-                <div>
-                    <p>Staff</p>
-                    <h2 id="staffTotal">0</h2>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- REGISTRATION FORM -->
-        <section class="dashboard-panel employee-form-panel">
-
-            <div class="panel-header">
+            <div class="card-heading">
                 <div>
                     <h2 id="formTitle">Employee Registration</h2>
-                    <p>Enter the employee information below.</p>
+                    <p id="formSubtitle">
+                        Enter the employee's information to register.
+                    </p>
                 </div>
             </div>
 
             <form id="employeeForm">
 
-                <div class="employee-form-grid">
+                <div class="form-grid">
 
-                    <div class="form-field">
+                    <div class="form-group">
                         <label for="employeeId">Employee ID</label>
-                        <input type="text"
-                               id="employeeId"
-                               placeholder="Enter Employee ID"
-                               required>
+                        <input
+                            type="text"
+                            id="employeeId"
+                            name="employeeId"
+                            placeholder="Enter Employee ID"
+                            maxlength="30"
+                            required
+                        >
                     </div>
 
-                    <div class="form-field">
-                        <label for="employeeName">Full Name</label>
-                        <input type="text"
-                               id="employeeName"
-                               placeholder="Enter Full Name"
-                               required>
+                    <div class="form-group">
+                        <label for="employeeName">Employee Name</label>
+                        <input
+                            type="text"
+                            id="employeeName"
+                            name="employeeName"
+                            placeholder="Enter full name"
+                            maxlength="100"
+                            required
+                        >
                     </div>
 
-                    <div class="form-field">
-                        <label for="employeePosition">Position</label>
-                        <select id="employeePosition" required>
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <select id="position" name="position" required>
                             <option value="">Select Position</option>
                             <option value="Faculty">Faculty</option>
                             <option value="Staff">Staff</option>
                         </select>
                     </div>
 
-                    <div class="form-field">
-                        <label for="employeeDepartment">Department</label>
-                        <select id="employeeDepartment" required>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" name="department" required>
                             <option value="">Select Department</option>
                             <option value="BSCRIM">BSCRIM</option>
                             <option value="BSIT">BSIT</option>
@@ -161,23 +549,28 @@
                         </select>
                     </div>
 
-                    <div class="form-field">
-                        <label for="employeePassword">
-                            Personal Password
-                        </label>
+                    <div class="form-group" id="passwordGroup">
+                        <label for="employeePassword">Create Password</label>
 
-                        <div class="password-field">
-                            <input type="password"
-                                   id="employeePassword"
-                                   placeholder="Create Password"
-                                   minlength="8"
-                                   required>
+                        <div class="password-wrapper">
+                            <input
+                                type="password"
+                                id="employeePassword"
+                                name="password"
+                                placeholder="Create employee password"
+                                minlength="8"
+                                maxlength="72"
+                                autocomplete="new-password"
+                                required
+                            >
 
-                            <button type="button"
-                                    class="password-toggle"
-                                    id="employeePasswordToggle"
-                                    aria-label="Show password">
-                                👁
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-toggle-password="employeePassword"
+                                aria-label="Show password"
+                            >
+                                Show
                             </button>
                         </div>
                     </div>
@@ -185,117 +578,66 @@
                 </div>
 
                 <div class="form-actions">
-
-                    <button type="submit"
-                            class="login-button"
-                            id="saveEmployeeButton">
-                        + REGISTER EMPLOYEE
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        id="saveEmployeeButton"
+                    >
+                        Save Employee
                     </button>
 
-                    <button type="button"
-                            class="cancel-button"
-                            id="cancelEditButton"
-                            hidden>
-                        CANCEL
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        id="cancelEditButton"
+                        hidden
+                    >
+                        Cancel Edit
                     </button>
-
                 </div>
 
             </form>
 
         </section>
 
-        <!-- DEPARTMENT FOLDERS -->
-        <section class="dashboard-panel">
+        <!-- EMPLOYEE LIST -->
+        <section class="content-card">
 
-            <div class="panel-header">
+            <div class="card-heading">
                 <div>
-                    <h2>Department Folders</h2>
-                    <p>Click a department to view its employees.</p>
+                    <h2>Registered Employees</h2>
+                    <p>View, edit, or delete employee information.</p>
                 </div>
             </div>
 
-            <div class="department-folder-grid"
-                 id="departmentFolders">
+            <div class="list-toolbar">
 
-                <button class="department-folder active"
-                        data-department="ALL">
-                    <span class="folder-icon">📁</span>
-                    <strong>All Employees</strong>
-                    <span class="folder-count" id="countALL">0</span>
-                </button>
+                <select
+                    class="filter-select"
+                    id="departmentFilter"
+                    aria-label="Filter by department"
+                >
+                    <option value="">All Departments</option>
+                    <option value="BSCRIM">BSCRIM</option>
+                    <option value="BSIT">BSIT</option>
+                    <option value="BSHM">BSHM</option>
+                    <option value="BSED">BSED</option>
+                    <option value="BSBA">BSBA</option>
+                    <option value="BEED">BEED</option>
+                </select>
 
-                <button class="department-folder"
-                        data-department="BSCRIM">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSCRIM</strong>
-                    <span class="folder-count" id="countBSCRIM">0</span>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSIT">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSIT</strong>
-                    <span class="folder-count" id="countBSIT">0</span>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSHM">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSHM</strong>
-                    <span class="folder-count" id="countBSHM">0</span>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSED">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSED</strong>
-                    <span class="folder-count" id="countBSED">0</span>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSBA">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSBA</strong>
-                    <span class="folder-count" id="countBSBA">0</span>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BEED">
-                    <span class="folder-icon">📁</span>
-                    <strong>BEED</strong>
-                    <span class="folder-count" id="countBEED">0</span>
-                </button>
+                <span class="employee-count" id="employeeCount">
+                    0 employees
+                </span>
 
             </div>
 
-        </section>
-
-        <!-- EMPLOYEE TABLE -->
-        <section class="dashboard-panel">
-
-            <div class="panel-header">
-
-                <div>
-                    <h2 id="employeeListTitle">All Employees</h2>
-                    <p>Registered faculty and staff.</p>
-                </div>
-
-                <input type="search"
-                       id="employeeSearch"
-                       class="search-input"
-                       placeholder="Search employee...">
-
-            </div>
-
-            <div class="table-container">
-
-                <table class="attendance-table">
-
+            <div class="table-wrapper">
+                <table>
                     <thead>
                         <tr>
                             <th>Employee ID</th>
-                            <th>Full Name</th>
+                            <th>Employee Name</th>
                             <th>Position</th>
                             <th>Department</th>
                             <th>Registered Date</th>
@@ -303,18 +645,14 @@
                         </tr>
                     </thead>
 
-                    <tbody id="employeeTable">
-
+                    <tbody id="employeeTableBody">
                         <tr>
-                            <td colspan="6" class="empty-state">
-                                No registered employees yet.
+                            <td colspan="6" class="empty-message">
+                                Loading employees...
                             </td>
                         </tr>
-
                     </tbody>
-
                 </table>
-
             </div>
 
         </section>
@@ -327,377 +665,308 @@
 <script src="app.js"></script>
 
 <script>
-requireAdmin();
+    document.addEventListener("DOMContentLoaded", function () {
+        const DB = window.DASDatabase;
 
-let selectedDepartment = "ALL";
-let editingEmployeeId = null;
+        const form = document.getElementById("employeeForm");
+        const tableBody = document.getElementById("employeeTableBody");
+        const departmentFilter = document.getElementById("departmentFilter");
 
-const employeeForm = document.getElementById("employeeForm");
+        const employeeIdInput = document.getElementById("employeeId");
+        const employeeNameInput = document.getElementById("employeeName");
+        const positionInput = document.getElementById("position");
+        const departmentInput = document.getElementById("department");
+        const passwordInput = document.getElementById("employeePassword");
 
-const employeeIdInput = document.getElementById("employeeId");
-const employeeNameInput = document.getElementById("employeeName");
-const employeePositionInput = document.getElementById("employeePosition");
-const employeeDepartmentInput = document.getElementById("employeeDepartment");
-const employeePasswordInput = document.getElementById("employeePassword");
+        const saveButton = document.getElementById("saveEmployeeButton");
+        const cancelButton = document.getElementById("cancelEditButton");
+        const passwordGroup = document.getElementById("passwordGroup");
 
-const employeeTable = document.getElementById("employeeTable");
-const employeeSearch = document.getElementById("employeeSearch");
+        let editingEmployeeId = null;
+        let employees = [];
 
-const employeeMessage = document.getElementById("employeeMessage");
+        document.getElementById("currentDate").textContent =
+            new Date().toLocaleDateString("en-PH", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            });
 
+        function showMessage(message, type = "error") {
+            if (window.DASApp && window.DASApp.showMessage) {
+                window.DASApp.showMessage(message, type);
+            } else {
+                alert(message);
+            }
+        }
 
-// SAFE HTML OUTPUT
-function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    }[char]));
-}
+        function createCell(text) {
+            const cell = document.createElement("td");
+            cell.textContent = text || "";
+            return cell;
+        }
 
+        function resetForm() {
+            form.reset();
 
-// MESSAGE
-function employeeNotify(message, type = "success") {
+            editingEmployeeId = null;
 
-    employeeMessage.textContent = message;
-    employeeMessage.className = "message " + type;
+            employeeIdInput.disabled = false;
+            passwordInput.required = true;
+            passwordGroup.hidden = false;
 
-    setTimeout(() => {
-        employeeMessage.textContent = "";
-        employeeMessage.className = "message";
-    }, 3000);
-}
+            document.getElementById("formTitle").textContent =
+                "Employee Registration";
 
+            document.getElementById("formSubtitle").textContent =
+                "Enter the employee's information to register.";
 
-// PASSWORD EYE
-document.getElementById("employeePasswordToggle")
-.addEventListener("click", function() {
+            saveButton.textContent = "Save Employee";
+            cancelButton.hidden = true;
+        }
 
-    const isPassword =
-        employeePasswordInput.type === "password";
-
-    employeePasswordInput.type =
-        isPassword ? "text" : "password";
-
-    this.textContent = isPassword ? "🙈" : "👁";
-
-    this.setAttribute(
-        "aria-label",
-        isPassword ? "Hide password" : "Show password"
-    );
-});
-
-
-// DEPARTMENT FOLDERS
-document.querySelectorAll(".department-folder")
-.forEach(folder => {
-
-    folder.addEventListener("click", function() {
-
-        selectedDepartment = this.dataset.department;
-
-        document.querySelectorAll(".department-folder")
-        .forEach(item => item.classList.remove("active"));
-
-        this.classList.add("active");
-
-        document.getElementById("employeeListTitle")
-        .textContent = selectedDepartment === "ALL"
-            ? "All Employees"
-            : selectedDepartment + " Employees";
-
-        renderEmployees();
-    });
-
-});
-
-
-// REGISTER OR UPDATE EMPLOYEE
-employeeForm.addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    const employeeId = employeeIdInput.value.trim();
-    const name = employeeNameInput.value.trim();
-    const position = employeePositionInput.value;
-    const department = employeeDepartmentInput.value;
-    const password = employeePasswordInput.value;
-
-    if (!employeeId || !name || !position || !department) {
-        employeeNotify("Please complete all required fields.", "error");
-        return;
-    }
-
-    if (!editingEmployeeId && password.length < 8) {
-        employeeNotify("Password must be at least 8 characters.", "error");
-        return;
-    }
-
-    let result;
-
-    if (editingEmployeeId) {
-
-        const updatedData = {
-            name,
-            position,
-            department
-        };
-
-        // Change password only if a new one is entered.
-        if (password) {
-            if (password.length < 8) {
-                employeeNotify(
-                    "New password must be at least 8 characters.",
-                    "error"
-                );
+        async function loadEmployees() {
+            if (!DB) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-message">
+                            Database connection unavailable.
+                        </td>
+                    </tr>
+                `;
                 return;
             }
 
-            updatedData.password = password;
+            tableBody.replaceChildren();
+
+            const loadingRow = document.createElement("tr");
+            const loadingCell = document.createElement("td");
+
+            loadingCell.colSpan = 6;
+            loadingCell.className = "empty-message";
+            loadingCell.textContent = "Loading employees...";
+
+            loadingRow.appendChild(loadingCell);
+            tableBody.appendChild(loadingRow);
+
+            try {
+                const department = departmentFilter.value;
+                const result = await DB.getEmployees(department);
+
+                employees = result.employees || [];
+
+                document.getElementById("employeeCount").textContent =
+                    `${employees.length} employee${employees.length === 1 ? "" : "s"}`;
+
+                renderEmployees();
+
+            } catch (error) {
+                tableBody.replaceChildren();
+
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+
+                cell.colSpan = 6;
+                cell.className = "empty-message";
+                cell.textContent = error.message;
+
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+            }
         }
 
-        result = DB.updateEmployee(editingEmployeeId, updatedData);
+        function renderEmployees() {
+            tableBody.replaceChildren();
 
-    } else {
+            if (employees.length === 0) {
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
 
-        result = DB.addEmployee({
-            employeeId,
-            name,
-            position,
-            department,
-            password
+                cell.colSpan = 6;
+                cell.className = "empty-message";
+                cell.textContent = "No registered employees found.";
+
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+
+                return;
+            }
+
+            employees.forEach(function (employee) {
+                const row = document.createElement("tr");
+
+                row.appendChild(createCell(employee.employeeId));
+                row.appendChild(createCell(employee.employeeName));
+
+                const positionCell = document.createElement("td");
+                const positionBadge = document.createElement("span");
+
+                positionBadge.className = "position-badge";
+                positionBadge.textContent = employee.position;
+
+                positionCell.appendChild(positionBadge);
+                row.appendChild(positionCell);
+
+                const departmentCell = document.createElement("td");
+                const departmentBadge = document.createElement("span");
+
+                departmentBadge.className = "department-badge";
+                departmentBadge.textContent = employee.department;
+
+                departmentCell.appendChild(departmentBadge);
+                row.appendChild(departmentCell);
+
+                row.appendChild(createCell(employee.registeredDate));
+
+                const actionCell = document.createElement("td");
+                const actionButtons = document.createElement("div");
+
+                actionButtons.className = "action-buttons";
+
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.className = "edit-button";
+                editButton.textContent = "Edit";
+
+                editButton.addEventListener("click", function () {
+                    startEdit(employee);
+                });
+
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "delete-button";
+                deleteButton.textContent = "Delete";
+
+                deleteButton.addEventListener("click", function () {
+                    deleteEmployee(employee);
+                });
+
+                actionButtons.appendChild(editButton);
+                actionButtons.appendChild(deleteButton);
+
+                actionCell.appendChild(actionButtons);
+                row.appendChild(actionCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        function startEdit(employee) {
+            editingEmployeeId = employee.employeeId;
+
+            employeeIdInput.value = employee.employeeId;
+            employeeIdInput.disabled = true;
+
+            employeeNameInput.value = employee.employeeName;
+            positionInput.value = employee.position;
+            departmentInput.value = employee.department;
+
+            passwordInput.value = "";
+            passwordInput.required = false;
+
+            passwordGroup.hidden = true;
+
+            document.getElementById("formTitle").textContent =
+                "Update Employee";
+
+            document.getElementById("formSubtitle").textContent =
+                "Edit employee information and save your changes.";
+
+            saveButton.textContent = "Update Employee";
+            cancelButton.hidden = false;
+
+            form.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+
+        async function deleteEmployee(employee) {
+            const confirmed = confirm(
+                `Are you sure you want to delete ${employee.employeeName} (${employee.employeeId})?`
+            );
+
+            if (!confirmed) return;
+
+            try {
+                await DB.deleteEmployee(employee.employeeId);
+
+                showMessage("Employee deleted successfully.", "success");
+
+                if (editingEmployeeId === employee.employeeId) {
+                    resetForm();
+                }
+
+                await loadEmployees();
+
+            } catch (error) {
+                showMessage(error.message || "Unable to delete employee.");
+            }
+        }
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const employee = {
+                employeeId: employeeIdInput.value.trim(),
+                employeeName: employeeNameInput.value.trim(),
+                position: positionInput.value,
+                department: departmentInput.value,
+                password: passwordInput.value
+            };
+
+            saveButton.disabled = true;
+            saveButton.textContent = editingEmployeeId
+                ? "Updating..."
+                : "Saving...";
+
+            try {
+                if (editingEmployeeId) {
+                    await DB.updateEmployee(
+                        editingEmployeeId,
+                        {
+                            employeeName: employee.employeeName,
+                            position: employee.position,
+                            department: employee.department
+                        }
+                    );
+
+                    showMessage(
+                        "Employee updated successfully.",
+                        "success"
+                    );
+
+                } else {
+                    await DB.registerEmployee(employee);
+
+                    showMessage(
+                        "Employee registered successfully.",
+                        "success"
+                    );
+                }
+
+                resetForm();
+                await loadEmployees();
+
+            } catch (error) {
+                showMessage(error.message || "Unable to save employee.");
+
+            } finally {
+                saveButton.disabled = false;
+
+                saveButton.textContent = editingEmployeeId
+                    ? "Update Employee"
+                    : "Save Employee";
+            }
         });
 
-    }
+        cancelButton.addEventListener("click", resetForm);
 
-    if (!result.success) {
-        employeeNotify(result.message, "error");
-        return;
-    }
+        departmentFilter.addEventListener("change", loadEmployees);
 
-    employeeNotify(result.message, "success");
-
-    resetEmployeeForm();
-    renderEmployees();
-
-});
-
-
-// RENDER EMPLOYEES
-function renderEmployees() {
-
-    const employees = DB.getEmployees();
-
-    const search = employeeSearch.value.trim().toLowerCase();
-
-    const filteredEmployees = employees.filter(employee => {
-
-        const matchesDepartment =
-            selectedDepartment === "ALL" ||
-            employee.department === selectedDepartment;
-
-        const matchesSearch =
-            employee.employeeId.toLowerCase().includes(search) ||
-            employee.name.toLowerCase().includes(search) ||
-            employee.department.toLowerCase().includes(search);
-
-        return matchesDepartment && matchesSearch;
-
+        loadEmployees();
     });
-
-    document.getElementById("employeeTotal").textContent =
-        employees.length;
-
-    document.getElementById("facultyTotal").textContent =
-        employees.filter(emp => emp.position === "Faculty").length;
-
-    document.getElementById("staffTotal").textContent =
-        employees.filter(emp => emp.position === "Staff").length;
-
-    document.getElementById("countALL").textContent =
-        employees.length;
-
-    ["BSCRIM", "BSIT", "BSHM", "BSED", "BSBA", "BEED"]
-    .forEach(department => {
-
-        document.getElementById("count" + department).textContent =
-            employees.filter(emp => emp.department === department).length;
-
-    });
-
-    if (filteredEmployees.length === 0) {
-
-        employeeTable.innerHTML = `
-            <tr>
-                <td colspan="6" class="empty-state">
-                    No employees found in this department.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    employeeTable.innerHTML = filteredEmployees.map(employee => `
-
-        <tr>
-
-            <td>${escapeHTML(employee.employeeId)}</td>
-
-            <td>
-                <strong>${escapeHTML(employee.name)}</strong>
-            </td>
-
-            <td>${escapeHTML(employee.position)}</td>
-
-            <td>
-                <span class="department-badge">
-                    ${escapeHTML(employee.department)}
-                </span>
-            </td>
-
-            <td>${escapeHTML(employee.registeredDate)}</td>
-
-            <td>
-                <div class="employee-actions">
-
-                    <button class="edit-button"
-                            onclick="editEmployee('${escapeHTML(employee.employeeId)}')">
-                        Edit
-                    </button>
-
-                    <button class="delete-button"
-                            onclick="deleteEmployee('${escapeHTML(employee.employeeId)}')">
-                        Delete
-                    </button>
-
-                </div>
-            </td>
-
-        </tr>
-
-    `).join("");
-
-}
-
-
-// EDIT EMPLOYEE
-function editEmployee(employeeId) {
-
-    const employee = DB.getEmployee(employeeId);
-
-    if (!employee) {
-        employeeNotify("Employee not found.", "error");
-        return;
-    }
-
-    editingEmployeeId = employeeId;
-
-    employeeIdInput.value = employee.employeeId;
-    employeeNameInput.value = employee.name;
-    employeePositionInput.value = employee.position;
-    employeeDepartmentInput.value = employee.department;
-
-    employeePasswordInput.value = "";
-    employeePasswordInput.required = false;
-
-    document.getElementById("formTitle").textContent =
-        "Update Employee";
-
-    document.getElementById("saveEmployeeButton").textContent =
-        "UPDATE EMPLOYEE";
-
-    document.getElementById("cancelEditButton").hidden =
-        false;
-
-    employeeIdInput.disabled = true;
-
-    employeeForm.scrollIntoView({
-        behavior: "smooth"
-    });
-
-}
-
-
-// DELETE EMPLOYEE
-function deleteEmployee(employeeId) {
-
-    const employee = DB.getEmployee(employeeId);
-
-    if (!employee) {
-        employeeNotify("Employee not found.", "error");
-        return;
-    }
-
-    const confirmed = confirm(
-        "Are you sure you want to delete " +
-        employee.name + "?"
-    );
-
-    if (!confirmed) return;
-
-    const result = DB.deleteEmployee(employeeId);
-
-    if (result.success) {
-
-        employeeNotify(result.message, "success");
-
-        renderEmployees();
-
-        if (editingEmployeeId === employeeId) {
-            resetEmployeeForm();
-        }
-
-    } else {
-
-        employeeNotify(result.message, "error");
-
-    }
-
-}
-
-
-// CANCEL EDIT
-document.getElementById("cancelEditButton")
-.addEventListener("click", resetEmployeeForm);
-
-
-// RESET FORM
-function resetEmployeeForm() {
-
-    employeeForm.reset();
-
-    editingEmployeeId = null;
-
-    employeeIdInput.disabled = false;
-
-    employeePasswordInput.required = true;
-
-    document.getElementById("formTitle").textContent =
-        "Employee Registration";
-
-    document.getElementById("saveEmployeeButton").textContent =
-        "+ REGISTER EMPLOYEE";
-
-    document.getElementById("cancelEditButton").hidden =
-        true;
-
-    employeePasswordInput.type = "password";
-
-    document.getElementById("employeePasswordToggle")
-    .textContent = "👁";
-}
-
-
-// SEARCH
-employeeSearch.addEventListener("input", renderEmployees);
-
-
-// INITIAL LOAD
-renderEmployees();
-
 </script>
 
 </body>
