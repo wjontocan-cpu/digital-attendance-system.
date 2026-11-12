@@ -1,0 +1,704 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees | Digital Attendance System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="sidebar-logo">DA</div>
+            <div>
+                <h2>Digital Attendance</h2>
+                <p>Management System</p>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+
+            <p class="menu-label">MAIN MENU</p>
+
+            <a href="dashboard.html" class="sidebar-link">
+                <span>▦</span> Dashboard
+            </a>
+
+            <a href="employee.html" class="sidebar-link active">
+                <span>♙</span> Employees
+            </a>
+
+            <a href="attendance.html" class="sidebar-link">
+                <span>▤</span> Attendance Record
+            </a>
+
+            <a href="monthly.html" class="sidebar-link">
+                <span>▦</span> Monthly Attendance
+            </a>
+
+            <p class="menu-label">ACCOUNT</p>
+
+            <button class="sidebar-link logout-link"
+                    onclick="logoutAdmin()">
+                <span>⇥</span> Logout
+            </button>
+
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="admin-avatar">A</div>
+            <div>
+                <strong>Administrator</strong>
+                <p>System Admin</p>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main">
+
+        <header class="dashboard-header">
+
+            <div>
+                <h1>Employee Management</h1>
+                <p>Register and manage faculty and staff.</p>
+            </div>
+
+        </header>
+
+        <!-- SUCCESS / ERROR MESSAGE -->
+        <div id="employeeMessage"
+             class="message"
+             role="status"
+             aria-live="polite">
+        </div>
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon blue">♙</div>
+                <div>
+                    <p>Total Employees</p>
+                    <h2 id="employeeTotal">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">✓</div>
+                <div>
+                    <p>Faculty</p>
+                    <h2 id="facultyTotal">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">♧</div>
+                <div>
+                    <p>Staff</p>
+                    <h2 id="staffTotal">0</h2>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- REGISTRATION FORM -->
+        <section class="dashboard-panel employee-form-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2 id="formTitle">Employee Registration</h2>
+                    <p>Enter the employee information below.</p>
+                </div>
+            </div>
+
+            <form id="employeeForm">
+
+                <div class="employee-form-grid">
+
+                    <div class="form-field">
+                        <label for="employeeId">Employee ID</label>
+                        <input type="text"
+                               id="employeeId"
+                               placeholder="Enter Employee ID"
+                               required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="employeeName">Full Name</label>
+                        <input type="text"
+                               id="employeeName"
+                               placeholder="Enter Full Name"
+                               required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="employeePosition">Position</label>
+                        <select id="employeePosition" required>
+                            <option value="">Select Position</option>
+                            <option value="Faculty">Faculty</option>
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="employeeDepartment">Department</label>
+                        <select id="employeeDepartment" required>
+                            <option value="">Select Department</option>
+                            <option value="BSCRIM">BSCRIM</option>
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSHM">BSHM</option>
+                            <option value="BSED">BSED</option>
+                            <option value="BSBA">BSBA</option>
+                            <option value="BEED">BEED</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="employeePassword">
+                            Personal Password
+                        </label>
+
+                        <div class="password-field">
+                            <input type="password"
+                                   id="employeePassword"
+                                   placeholder="Create Password"
+                                   minlength="8"
+                                   required>
+
+                            <button type="button"
+                                    class="password-toggle"
+                                    id="employeePasswordToggle"
+                                    aria-label="Show password">
+                                👁
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button type="submit"
+                            class="login-button"
+                            id="saveEmployeeButton">
+                        + REGISTER EMPLOYEE
+                    </button>
+
+                    <button type="button"
+                            class="cancel-button"
+                            id="cancelEditButton"
+                            hidden>
+                        CANCEL
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- DEPARTMENT FOLDERS -->
+        <section class="dashboard-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2>Department Folders</h2>
+                    <p>Click a department to view its employees.</p>
+                </div>
+            </div>
+
+            <div class="department-folder-grid"
+                 id="departmentFolders">
+
+                <button class="department-folder active"
+                        data-department="ALL">
+                    <span class="folder-icon">📁</span>
+                    <strong>All Employees</strong>
+                    <span class="folder-count" id="countALL">0</span>
+                </button>
+
+                <button class="department-folder"
+                        data-department="BSCRIM">
+                    <span class="folder-icon">📁</span>
+                    <strong>BSCRIM</strong>
+                    <span class="folder-count" id="countBSCRIM">0</span>
+                </button>
+
+                <button class="department-folder"
+                        data-department="BSIT">
+                    <span class="folder-icon">📁</span>
+                    <strong>BSIT</strong>
+                    <span class="folder-count" id="countBSIT">0</span>
+                </button>
+
+                <button class="department-folder"
+                        data-department="BSHM">
+                    <span class="folder-icon">📁</span>
+                    <strong>BSHM</strong>
+                    <span class="folder-count" id="countBSHM">0</span>
+                </button>
+
+                <button class="department-folder"
+                        data-department="BSED">
+                    <span class="folder-icon">📁</span>
+                    <strong>BSED</strong>
+                    <span class="folder-count" id="countBSED">0</span>
+                </button>
+
+                <button class="department-folder"
+                        data-department="BSBA">
+                    <span class="folder-icon">📁</span>
+                    <strong>BSBA</strong>
+                    <span class="folder-count" id="countBSBA">0</span>
+                </button>
+
+                <button class="department-folder"
+                        data-department="BEED">
+                    <span class="folder-icon">📁</span>
+                    <strong>BEED</strong>
+                    <span class="folder-count" id="countBEED">0</span>
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- EMPLOYEE TABLE -->
+        <section class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h2 id="employeeListTitle">All Employees</h2>
+                    <p>Registered faculty and staff.</p>
+                </div>
+
+                <input type="search"
+                       id="employeeSearch"
+                       class="search-input"
+                       placeholder="Search employee...">
+
+            </div>
+
+            <div class="table-container">
+
+                <table class="attendance-table">
+
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Full Name</th>
+                            <th>Position</th>
+                            <th>Department</th>
+                            <th>Registered Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="employeeTable">
+
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                No registered employees yet.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="database.js"></script>
+<script src="app.js"></script>
+
+<script>
+requireAdmin();
+
+let selectedDepartment = "ALL";
+let editingEmployeeId = null;
+
+const employeeForm = document.getElementById("employeeForm");
+
+const employeeIdInput = document.getElementById("employeeId");
+const employeeNameInput = document.getElementById("employeeName");
+const employeePositionInput = document.getElementById("employeePosition");
+const employeeDepartmentInput = document.getElementById("employeeDepartment");
+const employeePasswordInput = document.getElementById("employeePassword");
+
+const employeeTable = document.getElementById("employeeTable");
+const employeeSearch = document.getElementById("employeeSearch");
+
+const employeeMessage = document.getElementById("employeeMessage");
+
+
+// SAFE HTML OUTPUT
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[char]));
+}
+
+
+// MESSAGE
+function employeeNotify(message, type = "success") {
+
+    employeeMessage.textContent = message;
+    employeeMessage.className = "message " + type;
+
+    setTimeout(() => {
+        employeeMessage.textContent = "";
+        employeeMessage.className = "message";
+    }, 3000);
+}
+
+
+// PASSWORD EYE
+document.getElementById("employeePasswordToggle")
+.addEventListener("click", function() {
+
+    const isPassword =
+        employeePasswordInput.type === "password";
+
+    employeePasswordInput.type =
+        isPassword ? "text" : "password";
+
+    this.textContent = isPassword ? "🙈" : "👁";
+
+    this.setAttribute(
+        "aria-label",
+        isPassword ? "Hide password" : "Show password"
+    );
+});
+
+
+// DEPARTMENT FOLDERS
+document.querySelectorAll(".department-folder")
+.forEach(folder => {
+
+    folder.addEventListener("click", function() {
+
+        selectedDepartment = this.dataset.department;
+
+        document.querySelectorAll(".department-folder")
+        .forEach(item => item.classList.remove("active"));
+
+        this.classList.add("active");
+
+        document.getElementById("employeeListTitle")
+        .textContent = selectedDepartment === "ALL"
+            ? "All Employees"
+            : selectedDepartment + " Employees";
+
+        renderEmployees();
+    });
+
+});
+
+
+// REGISTER OR UPDATE EMPLOYEE
+employeeForm.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const employeeId = employeeIdInput.value.trim();
+    const name = employeeNameInput.value.trim();
+    const position = employeePositionInput.value;
+    const department = employeeDepartmentInput.value;
+    const password = employeePasswordInput.value;
+
+    if (!employeeId || !name || !position || !department) {
+        employeeNotify("Please complete all required fields.", "error");
+        return;
+    }
+
+    if (!editingEmployeeId && password.length < 8) {
+        employeeNotify("Password must be at least 8 characters.", "error");
+        return;
+    }
+
+    let result;
+
+    if (editingEmployeeId) {
+
+        const updatedData = {
+            name,
+            position,
+            department
+        };
+
+        // Change password only if a new one is entered.
+        if (password) {
+            if (password.length < 8) {
+                employeeNotify(
+                    "New password must be at least 8 characters.",
+                    "error"
+                );
+                return;
+            }
+
+            updatedData.password = password;
+        }
+
+        result = DB.updateEmployee(editingEmployeeId, updatedData);
+
+    } else {
+
+        result = DB.addEmployee({
+            employeeId,
+            name,
+            position,
+            department,
+            password
+        });
+
+    }
+
+    if (!result.success) {
+        employeeNotify(result.message, "error");
+        return;
+    }
+
+    employeeNotify(result.message, "success");
+
+    resetEmployeeForm();
+    renderEmployees();
+
+});
+
+
+// RENDER EMPLOYEES
+function renderEmployees() {
+
+    const employees = DB.getEmployees();
+
+    const search = employeeSearch.value.trim().toLowerCase();
+
+    const filteredEmployees = employees.filter(employee => {
+
+        const matchesDepartment =
+            selectedDepartment === "ALL" ||
+            employee.department === selectedDepartment;
+
+        const matchesSearch =
+            employee.employeeId.toLowerCase().includes(search) ||
+            employee.name.toLowerCase().includes(search) ||
+            employee.department.toLowerCase().includes(search);
+
+        return matchesDepartment && matchesSearch;
+
+    });
+
+    document.getElementById("employeeTotal").textContent =
+        employees.length;
+
+    document.getElementById("facultyTotal").textContent =
+        employees.filter(emp => emp.position === "Faculty").length;
+
+    document.getElementById("staffTotal").textContent =
+        employees.filter(emp => emp.position === "Staff").length;
+
+    document.getElementById("countALL").textContent =
+        employees.length;
+
+    ["BSCRIM", "BSIT", "BSHM", "BSED", "BSBA", "BEED"]
+    .forEach(department => {
+
+        document.getElementById("count" + department).textContent =
+            employees.filter(emp => emp.department === department).length;
+
+    });
+
+    if (filteredEmployees.length === 0) {
+
+        employeeTable.innerHTML = `
+            <tr>
+                <td colspan="6" class="empty-state">
+                    No employees found in this department.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    employeeTable.innerHTML = filteredEmployees.map(employee => `
+
+        <tr>
+
+            <td>${escapeHTML(employee.employeeId)}</td>
+
+            <td>
+                <strong>${escapeHTML(employee.name)}</strong>
+            </td>
+
+            <td>${escapeHTML(employee.position)}</td>
+
+            <td>
+                <span class="department-badge">
+                    ${escapeHTML(employee.department)}
+                </span>
+            </td>
+
+            <td>${escapeHTML(employee.registeredDate)}</td>
+
+            <td>
+                <div class="employee-actions">
+
+                    <button class="edit-button"
+                            onclick="editEmployee('${escapeHTML(employee.employeeId)}')">
+                        Edit
+                    </button>
+
+                    <button class="delete-button"
+                            onclick="deleteEmployee('${escapeHTML(employee.employeeId)}')">
+                        Delete
+                    </button>
+
+                </div>
+            </td>
+
+        </tr>
+
+    `).join("");
+
+}
+
+
+// EDIT EMPLOYEE
+function editEmployee(employeeId) {
+
+    const employee = DB.getEmployee(employeeId);
+
+    if (!employee) {
+        employeeNotify("Employee not found.", "error");
+        return;
+    }
+
+    editingEmployeeId = employeeId;
+
+    employeeIdInput.value = employee.employeeId;
+    employeeNameInput.value = employee.name;
+    employeePositionInput.value = employee.position;
+    employeeDepartmentInput.value = employee.department;
+
+    employeePasswordInput.value = "";
+    employeePasswordInput.required = false;
+
+    document.getElementById("formTitle").textContent =
+        "Update Employee";
+
+    document.getElementById("saveEmployeeButton").textContent =
+        "UPDATE EMPLOYEE";
+
+    document.getElementById("cancelEditButton").hidden =
+        false;
+
+    employeeIdInput.disabled = true;
+
+    employeeForm.scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+
+// DELETE EMPLOYEE
+function deleteEmployee(employeeId) {
+
+    const employee = DB.getEmployee(employeeId);
+
+    if (!employee) {
+        employeeNotify("Employee not found.", "error");
+        return;
+    }
+
+    const confirmed = confirm(
+        "Are you sure you want to delete " +
+        employee.name + "?"
+    );
+
+    if (!confirmed) return;
+
+    const result = DB.deleteEmployee(employeeId);
+
+    if (result.success) {
+
+        employeeNotify(result.message, "success");
+
+        renderEmployees();
+
+        if (editingEmployeeId === employeeId) {
+            resetEmployeeForm();
+        }
+
+    } else {
+
+        employeeNotify(result.message, "error");
+
+    }
+
+}
+
+
+// CANCEL EDIT
+document.getElementById("cancelEditButton")
+.addEventListener("click", resetEmployeeForm);
+
+
+// RESET FORM
+function resetEmployeeForm() {
+
+    employeeForm.reset();
+
+    editingEmployeeId = null;
+
+    employeeIdInput.disabled = false;
+
+    employeePasswordInput.required = true;
+
+    document.getElementById("formTitle").textContent =
+        "Employee Registration";
+
+    document.getElementById("saveEmployeeButton").textContent =
+        "+ REGISTER EMPLOYEE";
+
+    document.getElementById("cancelEditButton").hidden =
+        true;
+
+    employeePasswordInput.type = "password";
+
+    document.getElementById("employeePasswordToggle")
+    .textContent = "👁";
+}
+
+
+// SEARCH
+employeeSearch.addEventListener("input", renderEmployees);
+
+
+// INITIAL LOAD
+renderEmployees();
+
+</script>
+
+</body>
+</html>
