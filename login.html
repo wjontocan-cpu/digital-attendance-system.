@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Digital Attendance System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+
+    <div class="login-container">
+
+        <!-- LEFT PANEL -->
+        <div class="login-left">
+            <h1>Digital Attendance System</h1>
+            <p>Track. Manage. Monitor.</p>
+            <p>
+                A centralized attendance management system
+                for monitoring faculty and staff attendance.
+            </p>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="login-right">
+
+            <h2>Welcome Back!</h2>
+            <p>Please enter your administrator credentials.</p>
+
+            <form id="adminLoginForm" class="login-form">
+
+                <div class="form-group">
+                    <label for="adminUsername">Username</label>
+                    <input
+                        type="text"
+                        id="adminUsername"
+                        name="username"
+                        placeholder="Enter your username"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            id="adminPassword"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                        >
+
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+                    </div>
+                </div>
+
+                <a href="#" class="forgot-password" id="forgotPassword">
+                    Forgot Password?
+                </a>
+
+                <button type="submit" class="login-btn">
+                    Sign In
+                </button>
+
+                <div id="loginMessage" class="message-box"></div>
+
+            </form>
+
+            <div class="login-footer">
+                © 2026 Digital Attendance System
+            </div>
+
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
