@@ -2,511 +2,370 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Record | Digital Attendance System</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Record | Digital Attendance System</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px;
+      background: #111c35;
+      color: white;
+      padding: 28px 18px;
+      flex-shrink: 0;
+    }
+    .brand { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .brand span { color: #5b9cff; }
+    .sidebar-sub { color: #9eabc4; font-size: 12px; margin-bottom: 35px; }
+    .nav-title {
+      color: #7f8da9;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      margin: 22px 12px 10px;
+    }
+    .nav-link {
+      display: block;
+      padding: 13px 14px;
+      color: #c8d2e5;
+      text-decoration: none;
+      border-radius: 10px;
+      margin-bottom: 5px;
+      font-size: 14px;
+      transition: .2s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: #263653;
+      color: white;
+    }
+    .nav-link.active { border-left: 3px solid #5b9cff; }
+    .logout {
+      width: 100%;
+      margin-top: 30px;
+      padding: 12px;
+      border: 1px solid #34425d;
+      background: transparent;
+      color: #dce5f5;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+    .main { flex: 1; padding: 32px; min-width: 0; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .subtitle { color: #718096; font-size: 14px; }
+    .admin-badge {
+      background: #e8f1ff;
+      color: #2463c5;
+      border-radius: 30px;
+      padding: 10px 15px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .panel {
+      background: white;
+      border: 1px solid #e6ebf2;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 18px rgba(20, 40, 80, .035);
+    }
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    h2 { font-size: 18px; margin: 0; }
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    label { font-size: 12px; font-weight: 700; color: #65728a; }
+    select, input {
+      min-width: 180px;
+      padding: 11px 12px;
+      border: 1px solid #dce3ed;
+      border-radius: 9px;
+      background: white;
+      font: inherit;
+      color: #172033;
+      outline: none;
+    }
+    select:focus, input:focus { border-color: #5794f5; }
+    .btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 17px;
+      font-weight: 700;
+      cursor: pointer;
+      font: inherit;
+    }
+    .btn-primary { background: #2869d7; color: white; }
+    .btn-light { background: #edf3fb; color: #315b98; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
+    th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: #718096;
+      background: #f7f9fc;
+      padding: 14px 12px;
+    }
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #edf1f6;
+      font-size: 13px;
+    }
+    tbody tr:hover { background: #fafcff; }
+    .status {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .status-present { background: #e3f8ed; color: #16834d; }
+    .status-absent { background: #ffe8e8; color: #c43b3b; }
+    .status-incomplete { background: #fff3d9; color: #a46b00; }
+    .message {
+      display: none;
+      padding: 12px 15px;
+      margin-bottom: 18px;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+    .message.error { display: block; background: #fff0f0; color: #b42323; }
+    .message.success { display: block; background: #e8f8ef; color: #147a43; }
+    .empty { padding: 35px; text-align: center; color: #8793a7; }
+    .summary-note { font-size: 12px; color: #8190a5; }
+    @media (max-width: 850px) {
+      .sidebar { width: 210px; }
+      .main { padding: 22px; }
+    }
+    @media (max-width: 650px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .main { padding: 16px; }
+      .filters { width: 100%; }
+      .field, select, input { width: 100%; }
+    }
+  </style>
 </head>
-<body class="dashboard-body">
-
-<div class="dashboard-layout">
-
-    <!-- SIDEBAR -->
+<body>
+  <div class="layout">
     <aside class="sidebar">
+      <div class="brand">DIGITAL <span>ATTENDANCE</span></div>
+      <div class="sidebar-sub">Track. Manage. Monitor.</div>
 
-        <div class="sidebar-brand">
-            <div class="sidebar-logo">DA</div>
-            <div>
-                <h2>Digital Attendance</h2>
-                <p>Management System</p>
-            </div>
-        </div>
+      <div class="nav-title">MAIN MENU</div>
+      <a class="nav-link" href="dashboard.html">▦ Dashboard</a>
+      <a class="nav-link" href="employee.html">♙ Employees</a>
+      <a class="nav-link active" href="attendance.html">◷ Attendance Record</a>
+      <a class="nav-link" href="monthly.html">▤ Monthly Attendance</a>
 
-        <div class="sidebar-menu">
-
-            <p class="menu-label">MAIN MENU</p>
-
-            <a href="dashboard.html" class="sidebar-link">
-                <span>▦</span> Dashboard
-            </a>
-
-            <a href="employee.html" class="sidebar-link">
-                <span>♙</span> Employees
-            </a>
-
-            <a href="attendance.html" class="sidebar-link active">
-                <span>▤</span> Attendance Record
-            </a>
-
-            <a href="monthly.html" class="sidebar-link">
-                <span>▦</span> Monthly Attendance
-            </a>
-
-            <p class="menu-label">ACCOUNT</p>
-
-            <button class="sidebar-link logout-link"
-                    onclick="logoutAdmin()">
-                <span>⇥</span> Logout
-            </button>
-
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="admin-avatar">A</div>
-            <div>
-                <strong>Administrator</strong>
-                <p>System Admin</p>
-            </div>
-        </div>
-
+      <button class="logout" id="logoutButton">↪ Log Out</button>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="dashboard-main">
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Attendance Record</h1>
+          <div class="subtitle">View and monitor daily faculty and staff attendance.</div>
+        </div>
+        <div class="admin-badge">● Administrator</div>
+      </div>
 
-        <header class="dashboard-header">
-            <div>
-                <h1>Attendance Record</h1>
-                <p>View and manage daily faculty and staff attendance.</p>
-            </div>
-        </header>
+      <div id="pageMessage" class="message"></div>
 
-        <!-- FILTERS -->
-        <section class="dashboard-panel">
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Daily Attendance List</h2>
+          <span class="summary-note">Filter records by department and date.</span>
+        </div>
 
-            <div class="panel-header">
-                <div>
-                    <h2>Daily Attendance</h2>
-                    <p>Select a date and department.</p>
-                </div>
-            </div>
+        <div class="filters">
+          <div class="field">
+            <label for="departmentFilter">DEPARTMENT</label>
+            <select id="departmentFilter">
+              <option value="">All Departments</option>
+              <option value="BSCRIM">BSCRIM</option>
+              <option value="BSIT">BSIT</option>
+              <option value="BSHM">BSHM</option>
+              <option value="BSED">BSED</option>
+              <option value="BSBA">BSBA</option>
+              <option value="BEED">BEED</option>
+            </select>
+          </div>
 
-            <div class="attendance-filter-grid">
+          <div class="field">
+            <label for="dateFilter">DATE</label>
+            <input type="date" id="dateFilter">
+          </div>
 
-                <div class="form-field">
-                    <label for="attendanceDate">Select Date</label>
-                    <input type="date" id="attendanceDate">
-                </div>
+          <button class="btn btn-primary" id="filterButton">Search Records</button>
+          <button class="btn btn-light" id="resetButton">Reset</button>
+        </div>
+      </section>
 
-                <div class="form-field">
-                    <label for="attendanceSearch">Search Employee</label>
-                    <input type="search"
-                           id="attendanceSearch"
-                           placeholder="Search name or employee ID">
-                </div>
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Attendance Details</h2>
+          <span class="summary-note" id="recordCount">0 records</span>
+        </div>
 
-            </div>
-
-        </section>
-
-        <!-- STATISTICS -->
-        <section class="stats-grid">
-
-            <div class="stat-card">
-                <div class="stat-icon blue">♙</div>
-                <div>
-                    <p>Total Employees</p>
-                    <h2 id="totalEmployees">0</h2>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon green">✓</div>
-                <div>
-                    <p>Present</p>
-                    <h2 id="presentCount">0</h2>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon red">✕</div>
-                <div>
-                    <p>Absent</p>
-                    <h2 id="absentCount">0</h2>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- DEPARTMENT FOLDERS -->
-        <section class="dashboard-panel">
-
-            <div class="panel-header">
-                <div>
-                    <h2>Department Folders</h2>
-                    <p>Click a folder to view its daily attendance.</p>
-                </div>
-            </div>
-
-            <div class="department-folder-grid">
-
-                <button class="department-folder active"
-                        data-department="ALL">
-                    <span class="folder-icon">📁</span>
-                    <strong>All Departments</strong>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSCRIM">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSCRIM</strong>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSIT">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSIT</strong>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSHM">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSHM</strong>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSED">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSED</strong>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BSBA">
-                    <span class="folder-icon">📁</span>
-                    <strong>BSBA</strong>
-                </button>
-
-                <button class="department-folder"
-                        data-department="BEED">
-                    <span class="folder-icon">📁</span>
-                    <strong>BEED</strong>
-                </button>
-
-            </div>
-
-        </section>
-
-        <!-- RECORD TABLE -->
-        <section class="dashboard-panel">
-
-            <div class="panel-header">
-                <div>
-                    <h2 id="recordTitle">All Departments</h2>
-                    <p id="recordDateLabel">Daily attendance records</p>
-                </div>
-            </div>
-
-            <div class="table-container">
-
-                <table class="attendance-table">
-
-                    <thead>
-                        <tr>
-                            <th>Employee ID</th>
-                            <th>Employee Name</th>
-                            <th>Position</th>
-                            <th>Department</th>
-                            <th>Time In</th>
-                            <th>Time Out</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="attendanceTable">
-
-                        <tr>
-                            <td colspan="8" class="empty-state">
-                                No attendance records found.
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Position</th>
+                <th>Department</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+              <tr><td colspan="7" class="empty">Loading attendance records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
+  </div>
 
-</div>
+  <script src="database.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const departmentFilter = document.getElementById("departmentFilter");
+    const dateFilter = document.getElementById("dateFilter");
+    const tableBody = document.getElementById("attendanceTableBody");
+    const recordCount = document.getElementById("recordCount");
+    const pageMessage = document.getElementById("pageMessage");
 
-<script src="database.js"></script>
-<script src="app.js"></script>
+    function localToday() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
 
-<script>
-requireAdmin();
+    dateFilter.value = localToday();
 
-let selectedDepartment = "ALL";
+    function showPageMessage(message, type = "error") {
+      pageMessage.textContent = message;
+      pageMessage.className = "message " + type;
+    }
 
-const dateInput = document.getElementById("attendanceDate");
-const searchInput = document.getElementById("attendanceSearch");
-const attendanceTable = document.getElementById("attendanceTable");
+    function clearPageMessage() {
+      pageMessage.textContent = "";
+      pageMessage.className = "message";
+    }
 
+    function safeText(value) {
+      return value === null || value === undefined || value === ""
+        ? "—"
+        : String(value);
+    }
 
-// LOCAL DATE
-function getLocalDate() {
+    function statusBadge(record) {
+      const status = String(record.status || "").toLowerCase();
+      if (status.includes("absent")) {
+        return '<span class="status status-absent">Absent</span>';
+      }
+      if (status.includes("incomplete")) {
+        return '<span class="status status-incomplete">Incomplete</span>';
+      }
+      if (record.timeIn && record.timeOut) {
+        return '<span class="status status-present">Present</span>';
+      }
+      if (record.timeIn) {
+        return '<span class="status status-incomplete">In Progress</span>';
+      }
+      return '<span class="status status-absent">Absent</span>';
+    }
 
-    const now = new Date();
-
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-
-// SAFE HTML
-function escapeHTML(value) {
-
-    return String(value ?? "").replace(/[&<>"']/g, char => ({
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, character => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#39;"
-    }[char]));
+      }[character]));
+    }
 
-}
+    async function loadAttendance() {
+      clearPageMessage();
+      tableBody.innerHTML =
+        '<tr><td colspan="7" class="empty">Loading records...</td></tr>';
 
+      try {
+        const filters = {};
+        if (departmentFilter.value) filters.department = departmentFilter.value;
+        if (dateFilter.value) filters.date = dateFilter.value;
 
-// DEPARTMENT FOLDERS
-document.querySelectorAll(".department-folder")
-.forEach(folder => {
+        const records = await window.DASDatabase.getAttendance(filters);
 
-    folder.addEventListener("click", function() {
-
-        selectedDepartment = this.dataset.department;
-
-        document.querySelectorAll(".department-folder")
-        .forEach(item => item.classList.remove("active"));
-
-        this.classList.add("active");
-
-        document.getElementById("recordTitle").textContent =
-            selectedDepartment === "ALL"
-                ? "All Departments"
-                : selectedDepartment + " Attendance";
-
-        renderAttendance();
-
-    });
-
-});
-
-
-// DATE CHANGE
-dateInput.value = getLocalDate();
-
-dateInput.addEventListener("change", renderAttendance);
-
-
-// SEARCH
-searchInput.addEventListener("input", renderAttendance);
-
-
-// RENDER DAILY RECORDS
-function renderAttendance() {
-
-    const employees = DB.getEmployees();
-    const attendance = DB.getAttendance();
-
-    const selectedDate = dateInput.value;
-
-    document.getElementById("recordDateLabel").textContent =
-        "Attendance for " + selectedDate;
-
-    let presentCount = 0;
-    let absentCount = 0;
-
-    const filteredEmployees = employees.filter(employee => {
-
-        const matchesDepartment =
-            selectedDepartment === "ALL" ||
-            employee.department === selectedDepartment;
-
-        const search = searchInput.value.trim().toLowerCase();
-
-        const matchesSearch =
-            employee.name.toLowerCase().includes(search) ||
-            employee.employeeId.toLowerCase().includes(search);
-
-        return matchesDepartment && matchesSearch;
-
-    });
-
-    const records = filteredEmployees.map(employee => {
-
-        const record = attendance.find(item =>
-            item.employeeId === employee.employeeId &&
-            item.date === selectedDate
-        );
-
-        if (record && record.timeIn) {
-            presentCount++;
-        } else {
-            absentCount++;
+        if (!Array.isArray(records) || records.length === 0) {
+          tableBody.innerHTML =
+            '<tr><td colspan="7" class="empty">No attendance records found for the selected filters.</td></tr>';
+          recordCount.textContent = "0 records";
+          return;
         }
 
-        return {
-            employee,
-            record
-        };
+        tableBody.innerHTML = records.map(record => `
+          <tr>
+            <td><strong>${escapeHtml(safeText(record.employeeId))}</strong></td>
+            <td>${escapeHtml(safeText(record.employeeName))}</td>
+            <td>${escapeHtml(safeText(record.position))}</td>
+            <td>${escapeHtml(safeText(record.department))}</td>
+            <td>${escapeHtml(safeText(record.timeIn))}</td>
+            <td>${escapeHtml(safeText(record.timeOut))}</td>
+            <td>${statusBadge(record)}</td>
+          </tr>
+        `).join("");
 
+        recordCount.textContent = `${records.length} record${records.length === 1 ? "" : "s"}`;
+      } catch (error) {
+        tableBody.innerHTML =
+          '<tr><td colspan="7" class="empty">Unable to load attendance records.</td></tr>';
+        showPageMessage(error.message || "Could not load attendance records.");
+      }
+    }
+
+    document.getElementById("filterButton").addEventListener("click", loadAttendance);
+
+    document.getElementById("resetButton").addEventListener("click", () => {
+      departmentFilter.value = "";
+      dateFilter.value = localToday();
+      loadAttendance();
     });
 
-    document.getElementById("totalEmployees").textContent =
-        filteredEmployees.length;
-
-    document.getElementById("presentCount").textContent =
-        presentCount;
-
-    document.getElementById("absentCount").textContent =
-        absentCount;
-
-    if (records.length === 0) {
-
-        attendanceTable.innerHTML = `
-            <tr>
-                <td colspan="8" class="empty-state">
-                    No employees found.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    attendanceTable.innerHTML = records.map(({ employee, record }) => {
-
-        const status = record && record.timeIn
-            ? "Present"
-            : "Absent";
-
-        return `
-            <tr>
-
-                <td>${escapeHTML(employee.employeeId)}</td>
-
-                <td>
-                    <strong>${escapeHTML(employee.name)}</strong>
-                </td>
-
-                <td>${escapeHTML(employee.position)}</td>
-
-                <td>${escapeHTML(employee.department)}</td>
-
-                <td>${escapeHTML(record?.timeIn || "--")}</td>
-
-                <td>${escapeHTML(record?.timeOut || "--")}</td>
-
-                <td>
-                    <span class="status-badge ${status.toLowerCase()}">
-                        ${status}
-                    </span>
-                </td>
-
-                <td>
-                    ${
-                        record
-                        ? `
-                            <div class="employee-actions">
-
-                                <button class="edit-button"
-                                        data-action="edit"
-                                        data-id="${escapeHTML(record.attendanceId)}">
-                                    Edit
-                                </button>
-
-                                <button class="delete-button"
-                                        data-action="delete"
-                                        data-id="${escapeHTML(record.attendanceId)}">
-                                    Delete
-                                </button>
-
-                            </div>
-                          `
-                        : "--"
-                    }
-                </td>
-
-            </tr>
-        `;
-
-    }).join("");
-
-}
-
-
-// EDIT / DELETE ACTIONS
-attendanceTable.addEventListener("click", function(event) {
-
-    const button = event.target.closest("button[data-action]");
-
-    if (!button) return;
-
-    const attendanceId = button.dataset.id;
-    const action = button.dataset.action;
-
-    const records = DB.getAttendance();
-
-    const record = records.find(item =>
-        item.attendanceId === attendanceId
-    );
-
-    if (!record) return;
-
-    if (action === "edit") {
-
-        const newTimeIn = prompt(
-            "Edit Time In:",
-            record.timeIn
-        );
-
-        if (newTimeIn === null) return;
-
-        const newTimeOut = prompt(
-            "Edit Time Out:",
-            record.timeOut || ""
-        );
-
-        if (newTimeOut === null) return;
-
-        const result = DB.updateAttendance(attendanceId, {
-            timeIn: newTimeIn,
-            timeOut: newTimeOut
-        });
-
-        if (result.success) {
-            renderAttendance();
-        }
-
-    }
-
-    if (action === "delete") {
-
-        const confirmed = confirm(
-            "Delete this attendance record?"
-        );
-
-        if (!confirmed) return;
-
-        DB.deleteAttendance(attendanceId);
-
-        renderAttendance();
-
-    }
-
-});
-
-
-// INITIAL LOAD
-renderAttendance();
-
-</script>
-
+    loadAttendance();
+  </script>
 </body>
 </html>
