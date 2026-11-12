@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Digital Attendance System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">DA</div>
+                <div>
+                    <h2>Digital Attendance</h2>
+                    <p>Management System</p>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+
+                <p class="menu-label">MAIN MENU</p>
+
+                <a href="dashboard.html" class="sidebar-link active">
+                    <span>▦</span> Dashboard
+                </a>
+
+                <a href="employee.html" class="sidebar-link">
+                    <span>♙</span> Employees
+                </a>
+
+                <a href="attendance.html" class="sidebar-link">
+                    <span>▤</span> Attendance Record
+                </a>
+
+                <a href="monthly.html" class="sidebar-link">
+                    <span>▦</span> Monthly Attendance
+                </a>
+
+                <p class="menu-label">ACCOUNT</p>
+
+                <button class="sidebar-link logout-link"
+                        onclick="logoutAdmin()">
+                    <span>⇥</span> Logout
+                </button>
+
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="admin-avatar">A</div>
+                <div>
+                    <strong>Administrator</strong>
+                    <p>System Admin</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-main">
+
+            <!-- TOP BAR -->
+            <header class="dashboard-header">
+
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Welcome to Digital Attendance System</p>
+                </div>
+
+                <div class="header-right">
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <div>
+                            <strong>Admin</strong>
+                            <p>Administrator</p>
+                        </div>
+                    </div>
+                </div>
+
+            </header>
+
+            <!-- DATE -->
+            <section class="dashboard-welcome">
+
+                <div>
+                    <h2>Today's Attendance</h2>
+                    <p>Monitor the attendance of faculty and staff.</p>
+                </div>
+
+                <div class="today-date" id="todayDate">
+                    Loading date...
+                </div>
+
+            </section>
+
+            <!-- STATISTICS -->
+            <section class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">♙</div>
+                    <div>
+                        <p>Total Employees</p>
+                        <h2 id="totalEmployees">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">✓</div>
+                    <div>
+                        <p>Present Today</p>
+                        <h2 id="presentCount">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon red">✕</div>
+                    <div>
+                        <p>Absent Today</p>
+                        <h2 id="absentCount">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">◷</div>
+                    <div>
+                        <p>Attendance Rate</p>
+                        <h2 id="attendanceRate">0%</h2>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ATTENDANCE CONTENT -->
+            <section class="dashboard-content-grid">
+
+                <!-- TODAY'S ATTENDANCE TABLE -->
+                <div class="dashboard-panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Today's Attendance</h2>
+                            <p>Daily faculty and staff attendance</p>
+                        </div>
+
+                        <a href="attendance.html"
+                           class="view-all-link">
+                            View All →
+                        </a>
+                    </div>
+
+                    <div class="table-container">
+
+                        <table class="attendance-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Employee ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Time In</th>
+                                    <th>Time Out</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="todayAttendanceTable">
+
+                                <tr>
+                                    <td colspan="6" class="empty-state">
+                                        No attendance records yet.
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <!-- QUICK ACTIONS -->
+                <div class="dashboard-panel quick-actions-panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Quick Actions</h2>
+                            <p>Manage your attendance system</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <a href="employee.html"
+                           class="quick-action-card">
+
+                            <div class="quick-action-icon blue">
+                                ♙
+                            </div>
+
+                            <div>
+                                <strong>Register Employee</strong>
+                                <p>Add faculty or staff</p>
+                            </div>
+
+                            <span>→</span>
+
+                        </a>
+
+                        <a href="attendance.html"
+                           class="quick-action-card">
+
+                            <div class="quick-action-icon green">
+                                ▤
+                            </div>
+
+                            <div>
+                                <strong>Attendance Record</strong>
+                                <p>View daily attendance</p>
+                            </div>
+
+                            <span>→</span>
+
+                        </a>
+
+                        <a href="monthly.html"
+                           class="quick-action-card">
+
+                            <div class="quick-action-icon orange">
+                                ▦
+                            </div>
+
+                            <div>
+                                <strong>Monthly Attendance</strong>
+                                <p>View monthly summaries</p>
+                            </div>
+
+                            <span>→</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+
+    <script>
+        requireAdmin();
+
+        function loadDashboard() {
+
+            const employees = DB.getEmployees();
+            const attendance = DB.getAttendance();
+
+            const today = new Date()
+                .toISOString()
+                .split("T")[0];
+
+            const todayRecords = attendance.filter(
+                record => record.date === today
+            );
+
+            const presentIds = todayRecords.map(
+                record => record.employeeId
+            );
+
+            const present = employees.filter(
+                employee => presentIds.includes(employee.employeeId)
+            ).length;
+
+            const absent = employees.length - present;
+
+            const rate = employees.length > 0
+                ? Math.round((present / employees.length) * 100)
+                : 0;
+
+            document.getElementById("totalEmployees").textContent =
+                employees.length;
+
+            document.getElementById("presentCount").textContent =
+                present;
+
+            document.getElementById("absentCount").textContent =
+                absent;
+
+            document.getElementById("attendanceRate").textContent =
+                rate + "%";
+
+            document.getElementById("todayDate").textContent =
+                new Date().toLocaleDateString("en-PH", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                });
+
+            const table =
+                document.getElementById("todayAttendanceTable");
+
+            if (todayRecords.length === 0) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            No attendance records yet.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            table.innerHTML = todayRecords.map(record => `
+                <tr>
+                    <td>${record.employeeId}</td>
+                    <td>${record.employeeName}</td>
+                    <td>${record.department}</td>
+                    <td>${record.timeIn || "--"}</td>
+                    <td>${record.timeOut || "--"}</td>
+                    <td>
+                        <span class="status-badge present">
+                            ${record.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        loadDashboard();
+    </script>
+
+</body>
+</html>
